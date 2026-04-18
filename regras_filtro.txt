@@ -1,0 +1,63 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""
+ETAPA 2: Definição de Filtros Baseados em Análise
+Baseado na análise exploratória de teste_enriquecido.jsonl
+"""
+
+print("=" * 70)
+print("REGRAS DE FILTRAGEM - BASEADAS NA ANÁLISE EXPLORATÓRIA")
+print("=" * 70)
+
+print("""
+📊 DADOS OBSERVADOS:
+  - Total: 20,000 linhas
+  - chunk_len: min=103, p50=1024, max=1024 (distribuição excelente)
+  - Perguntas: min=20, p50=85, max=259 (tamanhos razoáveis)
+  - Problemas detectados:
+    ✅ 0% perguntas vazias
+    ✅ 0% duplicações
+    ✅ 0% prompt vazado
+    ⚠️  1.3% chunks < 200 chars (254 linhas)
+    ⚠️  Palavra "documento?" aparece 10,425x (pode indicar pergunta genérica)
+
+🎯 FILTROS PROPOSTOS:
+
+1. CHUNK_LEN MÍNIMO = 150 chars
+   Justificativa: P10=956, mas há 254 chunks < 200. Filtrar chunks muito pequenos.
+   Impacto estimado: ~1.3% removido (254 linhas)
+
+2. PERGUNTA MÍNIMA = 25 chars
+   Justificativa: min=20, mas queremos perguntas substantivas.
+   Impacto estimado: <0.1% (pouquíssimas perguntas < 25 chars)
+
+3. REMOVER PERGUNTAS GENÉRICAS DEMAIS
+   Detectar perguntas que começam com padrões muito vagos:
+   - "O documento menciona"
+   - "O documento fala"
+   - "O documento contém"
+   - "Qual é o documento"
+   Justificativa: "documento?" aparece 10k vezes. Perguntas genéricas não ajudam.
+   Impacto estimado: ~5-10% (conservador)
+
+4. SEM FILTROS DE DUPLICAÇÃO
+   Justificativa: 0% duplicações detectadas. Não é necessário.
+
+5. SEM FILTROS DE PROMPT VAZADO
+   Justificativa: 0% detectado. Dataset já está limpo.
+
+📈 IMPACTO TOTAL ESTIMADO:
+  - Removidos: ~1,500-2,500 linhas (7-12%)
+  - Mantidos: ~17,500-18,500 linhas (88-93%)
+  ✅ Mantém > 88% do dataset (muito conservador)
+
+🔧 IMPLEMENTAÇÃO:
+  Script: 02_filter_data.py
+  Entrada: teste_enriquecido.jsonl
+  Saída: teste_filtrado.jsonl
+  Relatório: filter_report.json
+""")
+
+print("=" * 70)
+print("✅ Regras definidas. Próximo passo: implementar 02_filter_data.py")
+print("=" * 70)
