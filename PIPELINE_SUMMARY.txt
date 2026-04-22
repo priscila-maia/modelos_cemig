@@ -35,6 +35,11 @@ OPCIONAL - QWEN
 - 19_eval_qwen_ft_v2.py (sem e com cross-encoder)
 - 20_eval_qwen_energy_eval_decoder.py (energy_eval + decoder Qwen3.5-9B)
 
+ARQUITETURA MODULAR (NOVO)
+- Codigo central em src/ (core, data, retrieval, generation, pipelines)
+- Entrada de pipeline via scripts/ com profile (atual: qwen_v2)
+- Scripts numerados do Qwen mantidos como wrappers de compatibilidade
+
 ARTEFATOS DE REFERENCIA
 - experiments/exp_v2_40k/results_summary_cycle2.md
 - experiments/exp_v2_40k_reranker_ft/results_summary_cycle3.md

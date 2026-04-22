@@ -1,0 +1,15 @@
+services:
+  qwen-flow:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    working_dir: /workspace
+    volumes:
+      - .:/workspace
+    environment:
+      HF_HOME: /workspace/.cache/huggingface
+      TRANSFORMERS_CACHE: /workspace/.cache/huggingface/transformers
+      SENTENCE_TRANSFORMERS_HOME: /workspace/.cache/huggingface/sentence_transformers
+    gpus: all
+    stdin_open: true
+    tty: true
