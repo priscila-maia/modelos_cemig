@@ -21,6 +21,18 @@ pip install -r requirements.txt
 - `train_pos_v1.jsonl`
 - `train_pos_v2.jsonl`
 - `train_cross_encoder.jsonl`
+- `energy_eval/train-00000-of-00001.parquet`
+
+## Cache de modelos (Hugging Face)
+
+Os scripts de avaliação do Qwen agora seguem o caminho padrão atual do Hugging Face
+(normalmente `~/.cache/huggingface`, ou o que já estiver em `HF_HOME`).
+
+Se quiser forçar cache local dentro do projeto:
+
+```bash
+export HF_CACHE_DIR="$(pwd)/.cache/huggingface"
+```
 
 ## Execução (ordem oficial)
 
@@ -57,4 +69,16 @@ python3 18_eval_reranker_ft_v2.py
 ```bash
 python3 12_train_qwen_encoder_v2.py
 python3 19_eval_qwen_ft_v2.py
+python3 20_eval_qwen_energy_eval_decoder.py
 ```
+
+### O que cada script opcional gera
+
+- `19_eval_qwen_ft_v2.py`
+  - avaliação sem cross-encoder e com cross-encoder (usando `reranker_ft`)
+  - arquivos em `experiments/exp_v2_40k/` com sufixos `no_cross`, `cross` e `compare`
+- `20_eval_qwen_energy_eval_decoder.py`
+  - avaliação do `qwen3_embedding_0_6b_ft_v2` no `energy_eval`
+  - usa decoder `Qwen/Qwen3.5-9B` para responder as alternativas (`answerKey`)
+  - compara sem cross-encoder vs com cross-encoder
+  - saídas em `experiments/exp_energy_eval_qwen/`

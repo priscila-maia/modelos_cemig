@@ -30,6 +30,11 @@ SEQUENCIA OFICIAL DE EXECUCAO
 17) 17_train_reranker_ft_v2.py
 18) 18_eval_reranker_ft_v2.py
 
+OPCIONAL - QWEN
+- 12_train_qwen_encoder_v2.py
+- 19_eval_qwen_ft_v2.py (sem e com cross-encoder)
+- 20_eval_qwen_energy_eval_decoder.py (energy_eval + decoder Qwen3.5-9B)
+
 ARTEFATOS DE REFERENCIA
 - experiments/exp_v2_40k/results_summary_cycle2.md
 - experiments/exp_v2_40k_reranker_ft/results_summary_cycle3.md
