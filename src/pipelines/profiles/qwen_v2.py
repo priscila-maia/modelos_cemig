@@ -5,6 +5,7 @@ without changing generic pipeline code.
 """
 
 from datetime import datetime
+from pathlib import Path
 
 import torch
 
@@ -61,7 +62,9 @@ def eval_retrieval_config():
         "require_cuda": True,
         "test_file": EXP_V2 / "train_pos_v2_test.jsonl",
         "encoder_model": EXP_V2 / "models" / "qwen3_embedding_0_6b_ft_v2",
-        "reranker_model": env_str("RERANKER_MODEL", str(EXP_RERANK / "models" / "reranker_ft")),
+        "reranker_model": env_str(
+            "RERANKER_MODEL", str(EXP_RERANK / "models" / "reranker_ft")
+        ),
         "results_legacy": EXP_V2 / "results_qwen_ft_v2.json",
         "metrics_legacy": EXP_V2 / "metrics_qwen_ft_v2.md",
         "results_no_cross": EXP_V2 / "results_qwen_ft_v2_no_cross.json",
@@ -73,6 +76,12 @@ def eval_retrieval_config():
 
 
 def eval_mcq_config():
+    energy_output_dir = env_str("ENERGY_OUTPUT_DIR", str(EXP_ENERGY))
+    energy_run_tag = env_str("ENERGY_RUN_TAG", "").strip()
+    file_prefix = "energy_eval_qwen"
+    if energy_run_tag:
+        file_prefix = f"{file_prefix}_{energy_run_tag}"
+
     return {
         "seed": SEED,
         "top_k_metrics": TOP_K_METRICS,
@@ -84,16 +93,26 @@ def eval_mcq_config():
         "decoder_max_new_tokens": env_int("DECODER_MAX_NEW_TOKENS", 8),
         "eval_max_rows": env_int("EVAL_MAX_ROWS", 0),
         "require_cuda": True,
-        "dataset_file": PROJECT_ROOT / "datasets" / "energy_eval" / "train-00000-of-00001.parquet",
+        "dataset_file": PROJECT_ROOT
+        / "datasets"
+        / "energy_eval"
+        / "train-00000-of-00001.parquet",
         "encoder_model": EXP_V2 / "models" / "qwen3_embedding_0_6b_ft_v2",
-        "reranker_model": env_str("RERANKER_MODEL", str(EXP_RERANK / "models" / "reranker_ft")),
+        "reranker_model": env_str(
+            "RERANKER_MODEL", str(EXP_RERANK / "models" / "reranker_ft")
+        ),
         "decoder_model": env_str("DECODER_MODEL_NAME", "Qwen/Qwen3.5-9B"),
-        "results_no_cross": EXP_ENERGY / "results_energy_eval_qwen_no_cross.json",
-        "results_cross": EXP_ENERGY / "results_energy_eval_qwen_cross.json",
-        "results_compare": EXP_ENERGY / "results_energy_eval_qwen_compare.json",
-        "metrics_compare": EXP_ENERGY / "metrics_energy_eval_qwen_compare.md",
-        "predictions_no_cross": EXP_ENERGY / "predictions_energy_eval_qwen_no_cross.jsonl",
-        "predictions_cross": EXP_ENERGY / "predictions_energy_eval_qwen_cross.jsonl",
-        "output_dir": EXP_ENERGY,
+        "results_no_cross": Path(energy_output_dir)
+        / f"results_{file_prefix}_no_cross.json",
+        "results_cross": Path(energy_output_dir) / f"results_{file_prefix}_cross.json",
+        "results_compare": Path(energy_output_dir)
+        / f"results_{file_prefix}_compare.json",
+        "metrics_compare": Path(energy_output_dir)
+        / f"metrics_{file_prefix}_compare.md",
+        "predictions_no_cross": Path(energy_output_dir)
+        / f"predictions_{file_prefix}_no_cross.jsonl",
+        "predictions_cross": Path(energy_output_dir)
+        / f"predictions_{file_prefix}_cross.jsonl",
+        "output_dir": Path(energy_output_dir),
         "tokenizer_kwargs": {"fix_mistral_regex": True},
     }

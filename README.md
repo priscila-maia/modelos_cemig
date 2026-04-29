@@ -1,9 +1,6 @@
 # Pipeline CEMIG
 
-Fluxo oficial atual para treino/avaliacao continua valido para E5 + reranker.
-
-Este repo agora tambem possui um fluxo modular em `src/`, preparado para etapas
-futuras que podem ou nao ser Qwen.
+Este repositorio usa um fluxo modular em `src/` com CLIs em `scripts/`.
 
 ## Requisitos
 
@@ -14,7 +11,7 @@ futuras que podem ou nao ser Qwen.
 pip install -r requirements.txt
 ```
 
-## Estrutura nova (modular)
+## Estrutura
 
 ```text
 src/
@@ -24,9 +21,10 @@ src/
   generation/   # decoder causal + prompts
   pipelines/    # pipelines genericos + profiles
 scripts/        # CLIs para rodar pipelines
+configs/        # YAMLs de execucao
 ```
 
-## Profiles (extensivel)
+## Profiles
 
 Os pipelines usam profile para defaults de modelo, caminhos e parametros.
 
@@ -35,18 +33,12 @@ Os pipelines usam profile para defaults de modelo, caminhos e parametros.
 
 ## Dados esperados em `datasets/`
 
-- `snapshot_v1.jsonl`
-- `snapshot_v1_enriquecido.jsonl`
-- `snapshot_v1_filtrado.jsonl`
-- `train_pos_v1.jsonl`
 - `train_pos_v2.jsonl`
-- `train_cross_encoder.jsonl`
 - `energy_eval/train-00000-of-00001.parquet`
 
 ## Cache de modelos (Hugging Face)
 
-Por padrao, os scripts usam o caminho atual do Hugging Face (`HF_HOME`,
-normalmente `~/.cache/huggingface`).
+Por padrao, os scripts usam o caminho atual do Hugging Face (`HF_HOME`, normalmente `~/.cache/huggingface`).
 
 Para forcar cache local no repo:
 
@@ -54,30 +46,7 @@ Para forcar cache local no repo:
 export HF_CACHE_DIR="$(pwd)/.cache/huggingface"
 ```
 
-## Fluxo oficial legado (E5 + reranker)
-
-```bash
-python3 01_validate_snapshot_v1.py
-python3 02_enrich_snapshot_v1.py
-python3 03_filter_snapshot_v1.py
-python3 04_build_train_pairs_v1.py
-python3 05_split_dataset_v1.py
-python3 06_eval_baseline_e5_v1.py
-python3 07_train_e5_encoder_v1.py
-python3 08_eval_e5_ft_v1.py
-python3 09_rerank_bge_m3_v1.py
-python3 10_filter_top25_v1.py
-python3 11_split_v2.py
-python3 12_train_e5_encoder_v2.py
-python3 13_eval_e5_ft_v2.py
-python3 14_rerank_bge_m3_v2.py
-python3 15_results_summary_cycle2.py
-python3 16_build_cross_encoder_dataset_v2.py
-python3 17_train_reranker_ft_v2.py
-python3 18_eval_reranker_ft_v2.py
-```
-
-## Fluxo modular (novo)
+## Fluxo modular
 
 ```bash
 python3 scripts/run_train_encoder.py --profile qwen_v2
@@ -85,14 +54,19 @@ python3 scripts/run_eval_retrieval.py --profile qwen_v2
 python3 scripts/run_eval_mcq.py --profile qwen_v2
 ```
 
-## Compatibilidade com comandos antigos (Qwen)
+## Configuracoes YAML para `eval_mcq`
 
-Os scripts antigos foram mantidos como wrappers para o fluxo modular:
+Configs prontas em `configs/eval_mcq/`:
+
+- `qwen3_5_9b.yaml`
+- `qwen3_5_4b.yaml`
+- `cemig_qwen3_4b_dw_lr.yaml`
+
+Rodar local com YAML:
 
 ```bash
-python3 12_train_qwen_encoder_v2.py
-python3 19_eval_qwen_ft_v2.py
-python3 20_eval_qwen_energy_eval_decoder.py
+python3 scripts/run_eval_mcq_from_yaml.py --config configs/eval_mcq/qwen3_5_4b.yaml
+python3 scripts/run_eval_mcq_from_yaml.py --config configs/eval_mcq/cemig_qwen3_4b_dw_lr.yaml
 ```
 
 ## Saidas principais do fluxo Qwen
@@ -103,7 +77,7 @@ python3 20_eval_qwen_energy_eval_decoder.py
 - `experiments/exp_energy_eval_qwen/results_energy_eval_qwen_compare.json`
 - `experiments/exp_energy_eval_qwen/metrics_energy_eval_qwen_compare.md`
 
-## Docker (minimo)
+## Docker
 
 Imagem base usada:
 
@@ -125,4 +99,11 @@ Executar pipeline no container:
 
 ```bash
 docker compose run --rm qwen-flow python3 scripts/run_eval_retrieval.py --profile qwen_v2
+```
+
+Executar `eval_mcq` com YAML no container:
+
+```bash
+docker compose run --rm qwen-flow python3 scripts/run_eval_mcq_from_yaml.py --config configs/eval_mcq/qwen3_5_4b.yaml
+docker compose run --rm qwen-flow python3 scripts/run_eval_mcq_from_yaml.py --config configs/eval_mcq/cemig_qwen3_4b_dw_lr.yaml
 ```

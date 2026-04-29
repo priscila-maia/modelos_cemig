@@ -1,6 +1,13 @@
+# Folders
 .venv/
 datasets/
 experiments/
 logs/
 reports/
 .cache/
+__pycache__/
+
+# Files
+.DS_Store
+.codex
+.env

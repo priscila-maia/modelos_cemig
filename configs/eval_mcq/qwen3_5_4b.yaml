@@ -1,0 +1,5 @@
+profile: qwen_v2
+env:
+  DECODER_MODEL_NAME: "Qwen/Qwen3.5-4B"
+  ENERGY_OUTPUT_DIR: "experiments/exp_energy_eval_qwen35_4b"
+  ENERGY_RUN_TAG: "qwen3_5_4b"

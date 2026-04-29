@@ -1,0 +1,5 @@
+profile: qwen_v2
+env:
+  DECODER_MODEL_NAME: "cemig-temp/qwen3-4b-dw-lr"
+  ENERGY_OUTPUT_DIR: "experiments/exp_energy_eval_cemig_qwen3_4b_dw_lr"
+  ENERGY_RUN_TAG: "cemig_qwen3_4b_dw_lr"
