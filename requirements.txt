@@ -3,6 +3,7 @@ torch
 numpy
 transformers
 accelerate
+huggingface_hub
 pandas
 pyarrow
 PyYAML

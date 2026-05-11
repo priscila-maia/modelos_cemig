@@ -54,6 +54,40 @@ python3 scripts/run_eval_retrieval.py --profile qwen_v2
 python3 scripts/run_eval_mcq.py --profile qwen_v2
 ```
 
+## Upload de modelos para Hugging Face
+
+O encoder `qwen3_embedding_0_6b_ft_v2` fica no caminho esperado pelo profile atual:
+
+```text
+experiments/exp_v2_40k/models/qwen3_embedding_0_6b_ft_v2
+```
+
+Para subir esse modelo, ou qualquer outra pasta de modelo, para um repo unico com subpastas:
+
+```bash
+python3 scripts/upload_model_to_hf.py
+python3 scripts/upload_model_to_hf.py \
+  --model-path experiments/exp_v2_40k/models/qwen3_embedding_0_6b_ft_v2 \
+  --repo-id CemigP/qwen3-embedding-0.6b-ft-v2 \
+  --path-in-repo qwen3_embedding_0_6b_ft_v2
+python3 scripts/upload_model_to_hf.py --dry-run
+```
+
+Autenticacao:
+
+```bash
+cp .env.example .env
+# preencha HF_TOKEN no arquivo .env
+```
+
+Notas:
+
+- O script cria o repo se ele ainda nao existir.
+- O padrao e criar repo privado; use `--public` apenas se quiser o contrario.
+- Se `--path-in-repo` nao for informado, o nome da subpasta no Hub sera o nome da pasta local do modelo.
+- Para modelos `sentence-transformers`, o script valida o carregamento local antes do upload.
+- Se `--token` nao for informado, o script tenta usar `HF_TOKEN` do arquivo `.env` na raiz do projeto.
+
 ## Configuracoes YAML para `eval_mcq`
 
 Configs prontas em `configs/eval_mcq/`:
